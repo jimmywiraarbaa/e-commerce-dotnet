@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Entities;
 
@@ -19,5 +20,8 @@ public class Product : BaseEntity
 
     public int Stock { get; set; }
 
+    public DateTime createdAt { get; set; }
+    
+    public DateTime updatedAt { get; set; }
 
 }
