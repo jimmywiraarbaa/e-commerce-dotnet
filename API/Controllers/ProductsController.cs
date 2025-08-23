@@ -20,7 +20,11 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
     {
-        return await context.Products.ToListAsync();
+        var products = await context.Products.ToListAsync();
+
+        if (!products.Any()) return NotFound(new { message = "Barang belum ada" });
+
+        return products;
     }
 
     [HttpGet("{id:int}")]
@@ -28,7 +32,7 @@ public class ProductsController : ControllerBase
     {
         var product = await context.Products.FindAsync(id);
 
-        if (product == null) return NotFound();
+        if (product == null) return NotFound(new { message = "Barang tidak ditemukan" });
 
         return product;
     }
@@ -42,5 +46,37 @@ public class ProductsController : ControllerBase
         await context.SaveChangesAsync();
 
         return product;
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateProduct(int id, Product product)
+    {
+        if (id != product.Id || !ProductExists(id)) return BadRequest("Tidak dapat mengubah produk tersebut");
+
+        context.Entry(product).State = EntityState.Modified;
+
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+
+    public async Task<ActionResult> DeleteProduct(int id)
+    {
+        var product = await context.Products.FindAsync(id);
+
+        if (product == null) return NotFound();
+
+        context.Products.Remove(product);
+
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool ProductExists(int id)
+    {
+        return context.Products.Any(x => x.Id == id);
     }
 }
