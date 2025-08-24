@@ -18,7 +18,7 @@ public class ProductRepository(StoreContext context) : IProductRepository
         context.Products.Remove(product);
     }
 
-    public async Task<Product?> GetProductById(int id)
+    public async Task<Product?> GetProductByIdAsync(int id)
     {
         return await context.Products.FindAsync(id);
     }
